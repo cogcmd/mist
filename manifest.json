@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "sha256": "50413f2f2a0d9c6bf560578fbad51eee7e5056cd98f59d52e1c8df0c1707acae",
+      "path": "config.json"
+    },
+    {
+      "sha256": "6f00d2cc3356e473e62299ceffa39ab3f3b9311e6a96cd7437b75176f2949590",
+      "path": "bin/install.sh"
+    },
+    {
+      "sha256": "979d939fa6868d78396835223a679599b08974c0b6a3449ffe694481ac4aed4a",
+      "path": "bin/ec2_find.py"
+    }
+  ]
+}

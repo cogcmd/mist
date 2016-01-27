@@ -1,0 +1,46 @@
+{
+  "bundle": {
+    "name": "mist",
+    "type": "foreign",
+    "install": "bin/install.sh"
+  },
+  "templates": [],
+  "permissions": ["mist:view", "mist:start", "mist:stop"],
+  "rules": ["when command is mist:ec2-find must have mist:view"],
+  "commands": [
+    {
+      "name": "ec2-find",
+      "version": "0.1",
+      "executable": "bin/ec2_find.py",
+      "enforcing": false,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "foo",
+        "AWS_SECRET_ACCESS_KEY": "bar"
+      },
+      "documentation": "Search and list EC2 instances based on tags and/or AMI IDs",
+      "options": [
+        {
+          "type": "string",
+          "required": true,
+          "name": "region"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "tag"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "ami"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "fields"
+        }
+      ]
+    }
+  ]
+}
