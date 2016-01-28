@@ -2,7 +2,8 @@
   "bundle": {
     "name": "mist",
     "type": "foreign",
-    "install": "bin/install.sh"
+    "install": "bin/install.sh",
+    "uninstall": "bin/uninstall.sh"
   },
   "templates": [],
   "permissions": ["mist:view", "mist:start", "mist:stop"],
@@ -18,7 +19,7 @@
         "AWS_ACCESS_KEY_ID": "foo",
         "AWS_SECRET_ACCESS_KEY": "bar"
       },
-      "documentation": "Search and list EC2 instances based on tags and/or AMI IDs",
+      "documentation": "mist:ec2-find --region=<region> [--tag | --ami | --return]",
       "options": [
         {
           "type": "string",
@@ -38,7 +39,12 @@
         {
           "type": "string",
           "required": false,
-          "name": "fields"
+          "name":, "ip_addr"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "return"
         }
       ]
     }
