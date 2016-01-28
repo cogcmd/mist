@@ -11,8 +11,8 @@
     {
       "name": "ec2-find",
       "version": "0.1",
-      "executable": "bin/ec2_find.py",
-      "enforcing": false,
+      "executable": "commands/ec2_find.py",
+      "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
         "AWS_ACCESS_KEY_ID": "foo",
