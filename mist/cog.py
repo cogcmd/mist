@@ -1,10 +1,16 @@
 import json
 import string
 import os
+import sys
 
 def send_json(data):
     print "JSON\n"
     print "%s\n" % (json.dumps(data))
+    sys.stdout.flush()
+
+def send_text(text):
+    print "%s\n" % (text)
+    sys.stdout.flush()
 
 def name_to_option_var(name):
     return "COG_OPT_" + string.upper(name)
@@ -30,3 +36,9 @@ def get_arg_count():
 def get_arg(index):
     arg_var = index_to_arg_var(index)
     return os.getenv(arg_var)
+
+def collect_args():
+    args = []
+    for i in range(1, get_arg_count()):
+        args.append(get_arg(i - 1))
+    return args
