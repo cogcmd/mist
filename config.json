@@ -6,8 +6,9 @@
     "uninstall": "bin/uninstall.sh"
   },
   "templates": [],
-  "permissions": ["mist:view", "mist:start", "mist:stop"],
-  "rules": ["when command is mist:ec2-find must have mist:view"],
+  "permissions": ["mist:view", "mist:reboot"],
+  "rules": ["when command is mist:ec2-find must have mist:view",
+            "when command is mist:ec2-reboot must have mist:reboot"],
   "commands": [
     {
       "name": "ec2-find",
@@ -17,13 +18,14 @@
       "calling_convention": "bound",
       "env_vars": {
         "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": ""
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:ec2-find --region=<region> [--tags | --ami | --return]",
       "options": [
         {
           "type": "string",
-          "required": true,
+          "required": false,
           "name": "region"
         },
         {
@@ -39,12 +41,26 @@
         {
           "type": "string",
           "required": false,
-          "name": "ip_addr"
-        },
+          "name": "return"
+        }
+      ]
+    },
+    {
+      "name": "ec2-reboot",
+      "version": "0.1",
+      "executable": "commands/ec2_reboot.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": ""
+      },
+      "documentation": "mist:ec2-reboot --region=<region> <instance_id>...",
+      "options": [
         {
           "type": "string",
-          "required": false,
-          "name": "return"
+          "required": true,
+          "name": "region"
         }
       ]
     }
