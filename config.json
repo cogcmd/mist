@@ -16,10 +16,10 @@
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "foo",
-        "AWS_SECRET_ACCESS_KEY": "bar"
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": ""
       },
-      "documentation": "mist:ec2-find --region=<region> [--tag | --ami | --return]",
+      "documentation": "mist:ec2-find --region=<region> [--tags | --ami | --return]",
       "options": [
         {
           "type": "string",
@@ -29,7 +29,7 @@
         {
           "type": "string",
           "required": false,
-          "name": "tag"
+          "name": "tags"
         },
         {
           "type": "string",
@@ -39,7 +39,7 @@
         {
           "type": "string",
           "required": false,
-          "name":, "ip_addr"
+          "name": "ip_addr"
         },
         {
           "type": "string",
