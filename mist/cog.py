@@ -16,7 +16,7 @@ def name_to_option_var(name):
     return "COG_OPT_" + string.upper(name)
 
 def index_to_arg_var(index):
-    return "COG_ARG_" + str(index)
+    return "COG_ARGV_" + str(index)
 
 def has_option(name):
     var_name = name_to_option_var(name)
@@ -39,6 +39,6 @@ def get_arg(index):
 
 def collect_args():
     args = []
-    for i in range(1, get_arg_count()):
-        args.append(get_arg(i - 1))
+    for i in range(0, get_arg_count()):
+        args.append(get_arg(i))
     return args

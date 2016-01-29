@@ -6,9 +6,10 @@
     "uninstall": "bin/uninstall.sh"
   },
   "templates": [],
-  "permissions": ["mist:view", "mist:reboot"],
+  "permissions": ["mist:view", "mist:reboot", "mist:destroy"],
   "rules": ["when command is mist:ec2-find must have mist:view",
-            "when command is mist:ec2-reboot must have mist:reboot"],
+            "when command is mist:ec2-reboot must have mist:reboot",
+            "when command is mist:ec2-destroy must have mist:destroy"],
   "commands": [
     {
       "name": "ec2-find",
@@ -25,7 +26,7 @@
       "options": [
         {
           "type": "string",
-          "required": false,
+          "required": true,
           "name": "region"
         },
         {
@@ -53,9 +54,30 @@
       "calling_convention": "bound",
       "env_vars": {
         "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": ""
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:ec2-reboot --region=<region> <instance_id>...",
+      "options": [
+        {
+          "type": "string",
+          "required": true,
+          "name": "region"
+        }
+      ]
+    },
+    {
+      "name": "ec2-destroy",
+      "version": "0.1",
+      "executable": "commands/ec2_destroy.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "mist:ec2-destroy --region=<region> <instance_id>...",
       "options": [
         {
           "type": "string",

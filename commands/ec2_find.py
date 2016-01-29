@@ -40,6 +40,7 @@ if __name__ == "__main__":
     display_instances = []
     for instance in instances:
         display_instances.append({"id": instance.id,
+                                  "region": region_name,
                                   "state": instance.state,
                                   "ami": instance.image_id,
                                   "private_addr": instance.private_ip_address})
