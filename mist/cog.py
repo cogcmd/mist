@@ -33,9 +33,9 @@ def get_arg_count():
     else:
         return int(arg_count)
 
-def get_arg(index):
+def get_arg(index, default = None):
     arg_var = index_to_arg_var(index)
-    return os.getenv(arg_var)
+    return os.getenv(arg_var, default)
 
 def collect_args():
     args = []

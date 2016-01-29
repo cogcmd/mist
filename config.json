@@ -9,7 +9,8 @@
   "permissions": ["mist:view", "mist:reboot", "mist:destroy"],
   "rules": ["when command is mist:ec2-find must have mist:view",
             "when command is mist:ec2-reboot must have mist:reboot",
-            "when command is mist:ec2-destroy must have mist:destroy"],
+            "when command is mist:ec2-destroy must have mist:destroy",
+            "when command is mist:s3-buckets must have mist:view"],
   "commands": [
     {
       "name": "ec2-find",
@@ -83,6 +84,31 @@
           "type": "string",
           "required": true,
           "name": "region"
+        }
+      ]
+    },
+    {
+      "name": "s3-buckets",
+      "version": "0.1",
+      "executable": "commands/s3_buckets.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "List S3 buckets",
+      "options": [
+        {
+          "type": "bool",
+          "required": false,
+          "name": "delete"
+        },
+        {
+          "type": "bool",
+          "required": false,
+          "name": "force"
         }
       ]
     }
