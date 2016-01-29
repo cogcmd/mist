@@ -7,6 +7,9 @@ SRC_FILES          = $(wildcard bin/*) $(wildcard commands/*)
 
 all: make-bundle
 
+clean:
+	rm -rf $(BUNDLE_NAME).cog _build
+
 make-bundle: manifest.json
 	mkdir -p $(WORK_DIR)
 	cp manifest.json config.json $(WORK_DIR)
