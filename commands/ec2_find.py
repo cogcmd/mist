@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import json
-import sys
 import boto.ec2
 import mist.cog as cog
 
