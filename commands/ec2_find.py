@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import boto.ec2
+from boto.ec2.instance import Instance
 import mist.cog as cog
 
 def update_dict(data, key, value):
@@ -33,17 +34,51 @@ def build_filters():
     filters = parse_tags(cog.get_option("tags"), filters)
     return filters
 
+def filter_returned_data(instances, returned_fields, region_name):
+    display_instances = []
+    for instance in instances:
+        di = {}
+        for field in returned_fields:
+            field = field.strip()
+            if field == "id":
+                di["id"] = instance.id
+            elif field == "pubdns":
+                di["pubdns"] = instance.public_dns_name
+            elif field == "privdns":
+                di["privdns"] = instance.private_dns_name
+            elif field == "state":
+                di["state"] = instance.state
+            elif field == "keyname":
+                di["keyname"] = instance.key_name
+            elif field == "ami":
+                di["ami"] = instance.image_id
+            elif field == "kernel":
+                di["kernel"] = instance.kernel
+            elif field == "arch":
+                di["arch"] = instance.arch
+            elif field == "vpc":
+                di["vpc"] = instance.vpc_id
+            elif field == "pubip":
+                di["pubip"] = instance.ip_address
+            elif field == "privip":
+                di["privip"] = instance.private_ip_address
+            elif field == "az":
+                di["az"] = instance.placement
+            elif field == "type":
+                di["type"] = instance.instance_type
+        di["region"] = region_name
+        display_instances.append(di)
+    return display_instances
+
 if __name__ == "__main__":
     region_name = cog.get_option("region")
+    returned_fields = cog.get_option("return")
+    if returned_fields is None:
+        returned_fields = "id,az,ami,privip,type"
     region = boto.ec2.connect_to_region(region_name)
     instances = region.get_only_instances(filters=build_filters())
     display_instances = []
-    for instance in instances:
-        display_instances.append({"id": instance.id,
-                                  "region": region_name,
-                                  "state": instance.state,
-                                  "ami": instance.image_id,
-                                  "private_addr": instance.private_ip_address})
+    display_instances = filter_returned_data(instances, returned_fields.split(","), region_name)
     if display_instances == []:
         display_instances = ["none"]
     cog.send_json(display_instances)

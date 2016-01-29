@@ -23,7 +23,7 @@
         "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
-      "documentation": "mist:ec2-find --region=<region> [--tags | --ami | --return]",
+      "documentation": "mist:ec2-find --region=<region> [--tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az)]"
       "options": [
         {
           "type": "string",
