@@ -1,3 +1,5 @@
 _build
 mist.cog
 manifest.json
+**/*.pyc
+**/*.pyo

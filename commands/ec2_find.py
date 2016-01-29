@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
 import json
-import os
+import sys
 import boto.ec2
-
-def send_json(data):
-    print "JSON\n"
-    print "%s\n" % (json.dumps(data))
+import mist.cog as cog
 
 def update_dict(data, key, value):
     if data.has_key(key):
@@ -33,15 +30,13 @@ def parse_tags(tags, filters):
 
 def build_filters():
     filters = {}
-    image_id = os.getenv("COG_OPT_AMI")
-    if image_id is not None:
-        filters["image_id"] = image_id
-    tags = os.getenv("COG_OPT_TAGS")
-    filters = parse_tags(tags, filters)
+    if cog.has_option("ami"):
+        filters["image_id"] = cog.get_option("ami")
+    filters = parse_tags(cog.get_option("tags"), filters)
     return filters
 
 if __name__ == "__main__":
-    region_name = os.getenv("COG_OPT_REGION")
+    region_name = cog.get_option("region")
     region = boto.ec2.connect_to_region(region_name)
     instances = region.get_only_instances(filters=build_filters())
     display_instances = []
@@ -52,4 +47,4 @@ if __name__ == "__main__":
                                   "private_addr": instance.private_ip_address})
     if display_instances == []:
         display_instances = ["none"]
-    send_json(display_instances)
+    cog.send_json(display_instances)

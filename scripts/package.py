@@ -28,7 +28,9 @@ def build_manifest(files):
     return {"files": file_entries}
 
 if __name__ == "__main__":
-    all_files = scan_for_files("commands") + scan_for_files("bin")
+    all_files = []
+    for dname in ["commands", "bin", "mist"]:
+        all_files = all_files + scan_for_files(dname)
     manifest = build_manifest(all_files)
     with open("manifest.json", "w") as f:
         f.truncate()
