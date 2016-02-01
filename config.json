@@ -23,7 +23,7 @@
         "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
-      "documentation": "mist:ec2-find --region=<region> [--tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az)]"
+      "documentation": "mist:ec2-find --region=<region> [--tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az)]",
       "options": [
         {
           "type": "string",
@@ -48,26 +48,6 @@
       ]
     },
     {
-      "name": "ec2-reboot",
-      "version": "0.1",
-      "executable": "commands/ec2_reboot.py",
-      "enforcing": true,
-      "calling_convention": "bound",
-      "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
-        "PYTHONPATH": "$INSTALL_PATH"
-      },
-      "documentation": "mist:ec2-reboot --region=<region> <instance_id>...",
-      "options": [
-        {
-          "type": "string",
-          "required": true,
-          "name": "region"
-        }
-      ]
-    },
-    {
       "name": "ec2-destroy",
       "version": "0.1",
       "executable": "commands/ec2_destroy.py",
@@ -79,6 +59,26 @@
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:ec2-destroy --region=<region> <instance_id>...",
+      "options": [
+        {
+          "type": "string",
+          "required": true,
+          "name": "region"
+        }
+      ]
+    },
+    {
+      "name": "ec2-reboot",
+      "version": "0.1",
+      "executable": "commands/ec2_reboot.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "mist:ec2-reboot --region=<region> <instance_id>...",
       "options": [
         {
           "type": "string",
