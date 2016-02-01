@@ -12,6 +12,9 @@ def send_text(text):
     print "%s\n" % (text)
     sys.stdout.flush()
 
+def command_name():
+    return os.getenv("COG_COMMAND")
+
 def name_to_option_var(name):
     return "COG_OPT_" + string.upper(name)
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import boto.ec2
+from boto.exception import EC2ResponseError
 from boto.ec2.instance import Instance
 import mist.cog as cog
 
@@ -34,8 +35,7 @@ def build_filters():
     filters = parse_tags(cog.get_option("tags"), filters)
     return filters
 
-def filter_returned_data(instances, returned_fields, region_name):
-    display_instances = []
+def filter_returned_data(instances, returned_fields, region_name, display_instances):
     for instance in instances:
         di = {}
         for field in returned_fields:
@@ -55,7 +55,7 @@ def filter_returned_data(instances, returned_fields, region_name):
             elif field == "kernel":
                 di["kernel"] = instance.kernel
             elif field == "arch":
-                di["arch"] = instance.arch
+                di["arch"] = instance.architecture
             elif field == "vpc":
                 di["vpc"] = instance.vpc_id
             elif field == "pubip":
@@ -68,17 +68,20 @@ def filter_returned_data(instances, returned_fields, region_name):
                 di["type"] = instance.instance_type
         di["region"] = region_name
         display_instances.append(di)
-    return display_instances
 
 if __name__ == "__main__":
     region_name = cog.get_option("region")
-    returned_fields = cog.get_option("return")
-    if returned_fields is None:
-        returned_fields = "id,az,ami,privip,type"
-    region = boto.ec2.connect_to_region(region_name)
-    instances = region.get_only_instances(filters=build_filters())
-    display_instances = []
-    display_instances = filter_returned_data(instances, returned_fields.split(","), region_name)
-    if display_instances == []:
-        display_instances = ["none"]
-    cog.send_json(display_instances)
+    try:
+        returned_fields = cog.get_option("return")
+        if returned_fields is None:
+            returned_fields = "id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,type"
+        display_instances = []
+        region = boto.ec2.connect_to_region(region_name)
+        instances = region.get_only_instances(filters=build_filters())
+        filter_returned_data(instances, returned_fields.split(","), region_name, display_instances)
+
+        if display_instances == []:
+            display_instances = ["none"]
+        cog.send_json(display_instances)
+    except EC2ResponseError as e:
+        cog.send_text("Error accessing region %s: %s" % (region_name, e.message))

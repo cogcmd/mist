@@ -6,10 +6,14 @@
     "uninstall": "bin/uninstall.sh"
   },
   "templates": [],
-  "permissions": ["mist:view", "mist:reboot", "mist:destroy"],
+  "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create"],
   "rules": ["when command is mist:ec2-find must have mist:view",
-            "when command is mist:ec2-reboot must have mist:reboot",
+            "when command is mist:ec2-stop must have mist:change-state",
+            "when command is mist:ec2-start must have mist:change-state",
+            "when command is mist:ec2-reboot must have mist:change-state",
             "when command is mist:ec2-destroy must have mist:destroy",
+            "when command is mist:vpc-list must have mist:view",
+            "when command is mist:keypairs-list must have mist:view",
             "when command is mist:s3-buckets must have mist:view"],
   "commands": [
     {
@@ -70,7 +74,7 @@
     {
       "name": "ec2-reboot",
       "version": "0.1",
-      "executable": "commands/ec2_reboot.py",
+      "executable": "commands/ec2_state.py",
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
@@ -84,6 +88,141 @@
           "type": "string",
           "required": true,
           "name": "region"
+        }
+      ]
+    },
+    {
+      "name": "ec2-stop",
+      "version": "0.1",
+      "executable": "commands/ec2_state.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "mist:ec2-stop --region=<region> <instance_id>...",
+      "options": [
+        {
+          "type": "string",
+          "required": true,
+          "name": "region"
+        }
+      ]
+    },
+    {
+      "name": "ec2-start",
+      "version": "0.1",
+      "executable": "commands/ec2_state.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "mist:ec2-start --region=<region> <instance_id>...",
+      "options": [
+        {
+          "type": "string",
+          "required": true,
+          "name": "region"
+        }
+      ]
+    },
+    {
+      "name": "vpc-list",
+      "version": "0.1",
+      "executable": "commands/ec2_vpcs.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "mist:vpc-list --region=<region>",
+      "options": [
+        {
+          "type": "string",
+          "required": true,
+          "name": "region"
+        }
+      ]
+    },
+    {
+      "name": "keypairs-list",
+      "version": "0.1",
+      "executable": "commands/ec2_keypairs.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "mist:keypairs-list --region=<region> <name> ...",
+      "options": [
+        {
+          "type": "string",
+          "required": true,
+          "name": "region"
+        }
+      ]
+    },
+    {
+      "name": "ec2-create",
+      "version": "0.1",
+      "executable": "commands/ec2_create.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "mist:ec2-create --region=<region> --type=<type> --ami=<ami> --keypair=<pair> --security-group=<group> --vpc=<vpc> --tags=<tags>",
+      "options": [
+        {
+          "type": "string",
+          "required": true,
+          "name": "region"
+        },
+        {
+          "type": "string",
+          "required": true,
+          "name": "type"
+        },
+        {
+          "type": "string",
+          "required": true,
+          "name": "ami"
+        },
+        {
+          "type": "string",
+          "required": true,
+          "name": "keypair"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "security-group"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "vpc"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "tags"
+        },
+        {
+          "type": "int",
+          "required": false,
+          "name": "count"
         }
       ]
     },
