@@ -16,7 +16,6 @@ make-bundle: manifest.json validate-config
 	cp -R bin $(WORK_DIR)
 	cp -R commands $(WORK_DIR)
 	cp -R mist $(WORK_DIR)
-	find $(WORK_DIR) -name "*.py?" | xargs rm
 	cd $(BUILD_DIR) && zip -r $(BUNDLE_NAME).cog $(BUNDLE_NAME)
 	mv $(BUILD_DIR)/$(BUNDLE_NAME).cog .
 
