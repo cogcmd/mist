@@ -12,6 +12,7 @@
             "when command is mist:ec2-start must have mist:change-state",
             "when command is mist:ec2-reboot must have mist:change-state",
             "when command is mist:ec2-destroy must have mist:destroy",
+            "when command is mist:ec2-create must have mist:create",
             "when command is mist:vpc-list must have mist:view",
             "when command is mist:keypairs-list must have mist:view",
             "when command is mist:s3-buckets must have mist:view"],
@@ -27,7 +28,7 @@
         "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
-      "documentation": "mist:ec2-find --region=<region> [--tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az)]",
+      "documentation": "mist:ec2-find --region=<region> [--state | --tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az)]",
       "options": [
         {
           "type": "string",
@@ -43,6 +44,11 @@
           "type": "string",
           "required": false,
           "name": "ami"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "state"
         },
         {
           "type": "string",
@@ -182,7 +188,7 @@
         "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
-      "documentation": "mist:ec2-create --region=<region> --type=<type> --ami=<ami> --keypair=<pair> --security-group=<group> --vpc=<vpc> --tags=<tags>",
+      "documentation": "mist:ec2-create --region=<region> --type=<type> --ami=<ami> --keypair=<pair> --az=<az> --vpc=<vpc> --tags=<tags> --user-data=<user_data>",
       "options": [
         {
           "type": "string",
@@ -207,7 +213,7 @@
         {
           "type": "string",
           "required": false,
-          "name": "security-group"
+          "name": "az"
         },
         {
           "type": "string",
@@ -218,6 +224,11 @@
           "type": "string",
           "required": false,
           "name": "tags"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "user-data"
         },
         {
           "type": "int",

@@ -25,9 +25,13 @@ def has_option(name):
     var_name = name_to_option_var(name)
     return os.getenv(var_name) is not None
 
-def get_option(name):
+def get_option(name, default = None):
     var_name = name_to_option_var(name)
-    return os.getenv(var_name)
+    var_value = os.getenv(var_name)
+    if var_value is None:
+        return default
+    else:
+        return var_value
 
 def get_arg_count():
     arg_count = os.getenv("COG_ARGC")

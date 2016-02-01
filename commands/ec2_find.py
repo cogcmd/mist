@@ -5,6 +5,8 @@ from boto.exception import EC2ResponseError
 from boto.ec2.instance import Instance
 import mist.cog as cog
 
+boto.set_stream_logger('boto')
+
 def update_dict(data, key, value):
     if data.has_key(key):
         existing = data[key]
@@ -32,6 +34,8 @@ def build_filters():
     filters = {}
     if cog.has_option("ami"):
         filters["image_id"] = cog.get_option("ami")
+    if cog.has_option("state"):
+        filters["instance-state-name"] = cog.get_option("state")
     filters = parse_tags(cog.get_option("tags"), filters)
     return filters
 
