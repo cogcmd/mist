@@ -16,7 +16,10 @@
             "when command is mist:vpc-list must have mist:view",
             "when command is mist:keypairs-list must have mist:view",
             "when command is mist:ec2-tag must have mist:manage-tags",
-            "when command is mist:s3-buckets must have mist:view"],
+            "when command is mist:s3-buckets must have mist:view",
+            "when command is mist:s3-buckets with option[delete] == true must have mist:destroy",
+            "when command is mist:s3-bucket-list must have mist:view",
+            "when command is mist:s3-bucket-list with option[delete] == true must have mist:destroy"],
   "commands": [
     {
       "name": "ec2-find",
@@ -260,6 +263,31 @@
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "List S3 buckets",
+      "options": [
+        {
+          "type": "bool",
+          "required": false,
+          "name": "delete"
+        },
+        {
+          "type": "bool",
+          "required": false,
+          "name": "force"
+        }
+      ]
+    },
+    {
+      "name": "s3-bucket-list",
+      "version": "0.1",
+      "executable": "commands/s3_bucket_list.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "s3-bucket-list [--delete --force] <bucket name> <search string> - List contents in a S3 bucket",
       "options": [
         {
           "type": "bool",
