@@ -33,6 +33,12 @@ def get_option(name, default = None):
     else:
         return var_value
 
+def pretty_null(value):
+    if value is None:
+        return "n/a"
+    else:
+        return value
+
 def get_arg_count():
     arg_count = os.getenv("COG_ARGC")
     if arg_count is None:

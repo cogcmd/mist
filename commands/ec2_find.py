@@ -3,6 +3,7 @@
 import boto.ec2
 from boto.exception import EC2ResponseError
 from boto.ec2.instance import Instance
+from mist.cog import pretty_null as pn
 import mist.cog as cog
 
 boto.set_stream_logger('boto')
@@ -45,31 +46,33 @@ def filter_returned_data(instances, returned_fields, region_name, display_instan
         for field in returned_fields:
             field = field.strip()
             if field == "id":
-                di["id"] = instance.id
+                di["id"] = pn(instance.id)
             elif field == "pubdns":
-                di["pubdns"] = instance.public_dns_name
+                di["pubdns"] = pn(instance.public_dns_name)
             elif field == "privdns":
-                di["privdns"] = instance.private_dns_name
+                di["privdns"] = pn(instance.private_dns_name)
             elif field == "state":
-                di["state"] = instance.state
+                di["state"] = pn(instance.state)
             elif field == "keyname":
-                di["keyname"] = instance.key_name
+                di["keyname"] = pn(instance.key_name)
             elif field == "ami":
-                di["ami"] = instance.image_id
+                di["ami"] = pn(instance.image_id)
             elif field == "kernel":
-                di["kernel"] = instance.kernel
+                di["kernel"] = pn(instance.kernel)
             elif field == "arch":
-                di["arch"] = instance.architecture
+                di["arch"] = pn(instance.architecture)
             elif field == "vpc":
-                di["vpc"] = instance.vpc_id
+                di["vpc"] = pn(instance.vpc_id)
             elif field == "pubip":
-                di["pubip"] = instance.ip_address
+                di["pubip"] = pn(instance.ip_address)
             elif field == "privip":
-                di["privip"] = instance.private_ip_address
+                di["privip"] = pn(instance.private_ip_address)
             elif field == "az":
-                di["az"] = instance.placement
+                di["az"] = pn(instance.placement)
             elif field == "type":
-                di["type"] = instance.instance_type
+                di["type"] = pn(instance.instance_type)
+            elif field == "tags":
+                di["tags"] = pn(instance.tags)
         di["region"] = region_name
         display_instances.append(di)
 
@@ -78,7 +81,7 @@ if __name__ == "__main__":
     try:
         returned_fields = cog.get_option("return")
         if returned_fields is None:
-            returned_fields = "id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,type"
+            returned_fields = "id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,type,tags"
         display_instances = []
         region = boto.ec2.connect_to_region(region_name)
         instances = region.get_only_instances(filters=build_filters())

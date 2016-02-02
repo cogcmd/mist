@@ -6,7 +6,7 @@
     "uninstall": "bin/uninstall.sh"
   },
   "templates": [],
-  "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create"],
+  "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create", "mist:manage-tags"],
   "rules": ["when command is mist:ec2-find must have mist:view",
             "when command is mist:ec2-stop must have mist:change-state",
             "when command is mist:ec2-start must have mist:change-state",
@@ -15,6 +15,7 @@
             "when command is mist:ec2-create must have mist:create",
             "when command is mist:vpc-list must have mist:view",
             "when command is mist:keypairs-list must have mist:view",
+            "when command is mist:ec2-tag must have mist:manage-tags",
             "when command is mist:s3-buckets must have mist:view"],
   "commands": [
     {
@@ -24,11 +25,9 @@
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
-      "documentation": "mist:ec2-find --region=<region> [--state | --tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az)]",
+      "documentation": "mist:ec2-find --region=<region> [--state | --tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,tags)]",
       "options": [
         {
           "type": "string",
@@ -64,8 +63,6 @@
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:ec2-destroy --region=<region> <instance_id>...",
@@ -84,8 +81,6 @@
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:ec2-reboot --region=<region> <instance_id>...",
@@ -104,8 +99,6 @@
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:ec2-stop --region=<region> <instance_id>...",
@@ -124,8 +117,6 @@
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:ec2-start --region=<region> <instance_id>...",
@@ -144,8 +135,6 @@
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:vpc-list --region=<region>",
@@ -164,8 +153,6 @@
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:keypairs-list --region=<region> <name> ...",
@@ -184,8 +171,6 @@
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "mist:ec2-create --region=<region> --type=<type> --ami=<ami> --keypair=<pair> --az=<az> --vpc=<vpc> --tags=<tags> --user-data=<user_data>",
@@ -238,14 +223,40 @@
       ]
     },
     {
+      "name": "ec2-tag",
+      "version": "0.1",
+      "executable": "commands/ec2_tags.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "Add or remove EC2 instance tags",
+      "options": [
+        {
+          "type": "string",
+          "required": true,
+          "name": "region"
+        },
+        {
+          "type": "string",
+          "required": true,
+          "name": "tags"
+        },
+        {
+          "type": "bool",
+          "required": false,
+          "name": "remove"
+        }
+      ]
+    },
+    {
       "name": "s3-buckets",
       "version": "0.1",
       "executable": "commands/s3_buckets.py",
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
         "PYTHONPATH": "$INSTALL_PATH"
       },
       "documentation": "List S3 buckets",

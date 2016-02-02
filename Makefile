@@ -9,6 +9,7 @@ all: make-bundle
 
 clean:
 	rm -rf $(BUNDLE_NAME).cog _build
+	find . -name "*.pyc" | xargs rm -v
 
 make-bundle: manifest.json validate-config
 	mkdir -p $(WORK_DIR)
