@@ -6,7 +6,7 @@
     "uninstall": "bin/uninstall.sh"
   },
   "templates": [],
-  "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create", "mist:manage-tags"],
+  "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create", "mist:manage-tags", "mist:change-acl"],
   "rules": ["when command is mist:ec2-find must have mist:view",
             "when command is mist:ec2-stop must have mist:change-state",
             "when command is mist:ec2-start must have mist:change-state",
@@ -19,7 +19,9 @@
             "when command is mist:s3-buckets must have mist:view",
             "when command is mist:s3-buckets with option[delete] == true must have mist:destroy",
             "when command is mist:s3-bucket-list must have mist:view",
-            "when command is mist:s3-bucket-list with option[delete] == true must have mist:destroy"],
+            "when command is mist:s3-bucket-list with option[delete] == true must have mist:destroy",
+            "when command is mist:s3-bucket-acl must have mist:view",
+            "when command is mist:s3-bucket-acl with option[set-policy] == /.*/ must have mist:change-acl"],
   "commands": [
     {
       "name": "ec2-find",
@@ -293,6 +295,31 @@
           "type": "bool",
           "required": false,
           "name": "delete"
+        },
+        {
+          "type": "bool",
+          "required": false,
+          "name": "force"
+        }
+      ]
+    },
+    {
+      "name": "s3-bucket-acl",
+      "version": "0.1",
+      "executable": "commands/s3_bucket_acl.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "AWS_ACCESS_KEY_ID": "",
+        "AWS_SECRET_ACCESS_KEY": "",
+        "PYTHONPATH": "$INSTALL_PATH"
+      },
+      "documentation": "s3-bucket-acl [--set-policy=[public-read, private, public-read-write, authenticated-read] --force] <bucket name> <filename> - Displays or sets the ACL for a S3 bucket",
+      "options": [
+        {
+          "type": "string",
+          "required": false,
+          "name": "set-policy"
         },
         {
           "type": "bool",
