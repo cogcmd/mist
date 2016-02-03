@@ -39,15 +39,15 @@ def set_acl_policies(policy, file_keys, bucketname, specified_file, force=False)
     if force:
         for file_key in file_keys:
             file_key.set_acl(policy)
-        cog.send_text("The policy has been set to '%s' on the following: %s\n." % (policy, fkey_names))
+        cog.send_text("The policy has been set to '%s' on the following: %s.\n" % (policy, fkey_names))
     else:
-        cog.send_text("This will set the policy to '%s' on the following: %s\nPlease pass the --force option to confirm." % (policy, fkey_names))
+        cog.send_text("This will set the policy to '%s' on the following: %s.\nPlease pass the --force option to confirm." % (policy, fkey_names))
 
 def respond(set_policy, file_keys, bucketname, specified_file, force=False):
     if set_policy and set_policy.lower() in ("public-read", "private", "public-read-write", "authenticated-read"):
         set_acl_policies(set_policy, file_keys, bucketname, specified_file, force)
     elif set_policy:
-        cog.send_text("Error Unknown policy. Please set to one of the following: 'public-read, private, public-read-write, authenticated-read'")
+        cog.send_text("Error Unknown policy. Please set to one of the following: 'public-read, private, public-read-write, authenticated-read'.")
     else:
         cog.send_json(prepare(file_keys))
 
