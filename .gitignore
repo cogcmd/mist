@@ -3,3 +3,4 @@ mist.cog
 manifest.json
 **/*.pyc
 **/*.pyo
+**/*.swp
