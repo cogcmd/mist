@@ -49,8 +49,7 @@ def respond(set_policy, file_keys, bucketname, specified_file, force=False):
     if set_policy and set_policy.lower() in ("public-read", "private", "public-read-write", "authenticated-read"):
         set_acl_policies(set_policy, file_keys, bucketname, specified_file, force)
     elif set_policy:
-        err_msg = "Error Unknown policy. Please set to one of the following: 'public-read, private, public-read-write, authenticated-read'."
-        cog.send_json({"error": err_msg})
+        cog.send_error("Error Unknown policy. Set to one of the following: 'public-read, private, public-read-write, authenticated-read'.")
     else:
         cog.send_json(prepare(file_keys))
 

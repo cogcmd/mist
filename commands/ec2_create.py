@@ -47,4 +47,4 @@ if __name__ == "__main__":
         create_instance(region_name, ami, instance_type, count, keypair=keypair,
                         az=az, subnet=subnet, user_data=user_data, tags=tags)
     except EC2ResponseError as e:
-        cog.send_text("Error starting new instance: %s" % (e.message))
+        cog.send_error("Error starting new instance: %s" % (e.message))

@@ -34,5 +34,5 @@ if __name__ == "__main__":
     elif command_name == "ec2-start":
         ec2_start(instances)
     else:
-        cog.send_text("I don't know how to %s" % (command_name))
+        cog.send_error("I don't know how to %s" % (command_name))
 

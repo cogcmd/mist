@@ -18,13 +18,13 @@ def add_tags(region_name, tags, ids):
     region = boto.ec2.connect_to_region(region_name)
     for instance in region.get_only_instances(instance_ids = ids):
         instance.add_tags(tags)
-    cog.send_text("ok")
+    cog.send_json({"body": "ok"})
 
 def remove_tags(region_name, tags, ids):
     region = boto.ec2.connect_to_region(region_name)
     for instance in region.get_only_instances(instance_ids = ids):
         instance.remove_tags(tags)
-    cog.send_text("ok")
+    cog.send_json({"body": "ok"})
 
 if __name__ == "__main__":
     region_name = cog.get_option("region")

@@ -91,4 +91,4 @@ if __name__ == "__main__":
             display_instances = ["none"]
         cog.send_json(display_instances)
     except EC2ResponseError as e:
-        cog.send_text("Error accessing region %s: %s" % (region_name, e.message))
+        cog.send_error("Error accessing region %s: %s" % (region_name, e.message))
