@@ -38,4 +38,4 @@ if __name__ == "__main__":
         if cog.command_name() == "vpc-list":
             vpc_list(region_name, cog.collect_args())
     except EC2ResponseError as e:
-        cog.send_text("Error listing VPCs: %s" % (e.message))
+        cog.send_error("Error listing VPCs: %s" % (e.message))

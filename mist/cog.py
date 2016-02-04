@@ -8,9 +8,8 @@ def send_json(data):
     print "%s\n" % (json.dumps(data))
     sys.stdout.flush()
 
-def send_text(text):
-    print "%s\n" % (text)
-    sys.stdout.flush()
+def send_error(text):
+    send_json({"error": text})
 
 def command_name():
     return os.getenv("COG_COMMAND")

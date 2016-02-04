@@ -29,10 +29,11 @@ def respond(buckets, delete = False, force = False):
         if delete_buckets(buckets):
             cog.send_json(prepare(buckets))
         else:
-            cog.send_text("Error Deleting buckets")
+            cog.send_error("Error deleting buckets")
     elif delete:
         bucket_names = ', '.join([bucket.name for bucket in buckets])
-        cog.send_text("This will delete the following buckets: %s\nPlease pass the --force option to confirm." % bucket_names)
+        response = "This will delete the following buckets: %s\nPlease pass the --force option to confirm." % bucket_names
+        cog.send_json({"body": response})
     else:
         cog.send_json(prepare(buckets))
 

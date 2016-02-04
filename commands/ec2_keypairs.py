@@ -25,4 +25,4 @@ if __name__ == "__main__":
         if cog.command_name() == "keypairs-list":
             keypairs_list(region_name)
     except EC2ResponseError as e:
-        cog.send_text("Error listing keypairs: %s" % (e.message))
+        cog.send_error("Error listing keypairs: %s" % (e.message))

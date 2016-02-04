@@ -45,7 +45,7 @@ def respond(file_keys, delete = False, force = False):
         if delete_filekeys(file_keys):
             cog.send_json(prepare(file_keys))
         else:
-            cog.send_json({"error": "Error deleting file keys"})
+            cog.send_error("Error deleting file keys")
     elif delete:
         file_keynames = ', '.join([file_key.bucket.name+':'+file_key.name for file_key in file_keys])
         response = "This will delete the following files: %s\nPlease pass the --force option to confirm." % (file_keynames)
