@@ -8,7 +8,7 @@ SRC_FILES          = $(wildcard bin/*) $(wildcard commands/*) $(wildcard mist/*)
 all: make-bundle
 
 clean:
-	rm -rf $(BUNDLE_NAME).cog _build
+	rm -rf $(BUNDLE_NAME).cog _build manifest.json
 	find . -name "*.pyc" | xargs rm -v
 
 make-bundle: manifest.json validate-config
