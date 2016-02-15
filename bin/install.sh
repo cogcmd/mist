@@ -1,3 +1,3 @@
 #!/bin/sh
 
-sudo -H pip install boto
+pip install boto
