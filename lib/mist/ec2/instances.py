@@ -3,23 +3,19 @@ import boto.ec2
 from cog.logger import Logger
 from cog.command import Command
 
-class CreateCommand(Command):
-    def parse_tags_(self):
-        tags = self.req.option("tags")
-        parsed = {}
-        if tags is not None:
-            pairs = tags.split(",")
-            for pair in pairs:
-                kv = pair.split("=")
-                if len(parsed) == 2:
-                    parsed[kv[0]] = kv[1]
-                else:
-                    parsed[kv[0]] = ""
-        if len(parsed) == 0:
-            self.tags = None
-        else:
-            self.tags = parsed
+def kv_tag_parse(tags):
+    parsed = {}
+    if tags is not None:
+        pairs = tags.split(",")
+        for pair in pairs:
+            kv = pair.split("=")
+            if len(parsed) == 2:
+                parsed[kv[0]] = kv[1]
+            else:
+                parsed[kv[0]] = ""
+    return parsed
 
+class CreateCommand(Command):
     def tag_instances(self, instance_ids, tags):
         instances = self.region.get_only_instances(instance_ids = instance_ids)
         for instance in instances:
@@ -53,7 +49,11 @@ class CreateCommand(Command):
         self.az = self.req.option("az")
         self.subnet = self.req.option("subnet")
         self.user_data = self.req.option("user-data")
-        self.tags = self.parse_tags_()
+        tags = kv_tag_parse(self.req.option("tags"))
+        if len(tags) > 0:
+            self.tags = tags
+        else:
+            self.tags = None
         self.handlers["default"] = self.create_instance
 
     def usage_error(self):
@@ -189,3 +189,79 @@ class DestroyCommand(Command):
 
     def usage_error(self):
         self.resp.send_error("ec2-destroy --region=<region_name> ...")
+
+
+class ChangeStateCommand(Command):
+    def handle_reboot(self):
+        if len(self.instances) > 0:
+            self.region.reboot_instances(self.instances)
+        self.resp.append_body({"instances": self.instances,
+                               "region": self.region_name,
+                               "action": "rebooted"}, template="state_change")
+
+    def handle_stop(self):
+        if len(self.instances) > 0:
+            self.region.stop_instances(self.instances)
+        self.resp.append_body({"instances": self.instances,
+                               "region": self.region_name,
+                               "action": "stopped"}, template="state_change")
+
+    def handle_start(self):
+        if len(self.instances) > 0:
+            self.region.start_instances(self.instances)
+        self.resp.append_body({"instances": self.instances,
+                               "region": self.region_name,
+                               "action": "started"}, template="state_change")
+
+    def prepare(self):
+        self.region_name = self.req.option("region")
+        try:
+            self.region = boto.ec2.connect_to_region(self.region_name)
+        except Exception as e:
+            Logger.error("Error connecting to EC2: %s" % (e))
+            self.resp.send_error("Cannot connect to EC2")
+        args = self.req.args()
+        if len(args) < 2:
+            self.usage_error()
+        else:
+            self.instances = args[1:]
+
+    def usage_error(self):
+        self.resp.send_error("ec2-state [start|stop|reboot] ...")
+
+
+class TagCommand(Command):
+    def handle_add(self):
+        for instance in self.region.get_only_instances(instance_ids=self.instances):
+            instance.add_tags(self.tags)
+        cog.req.append_body({"instances": self.instances,
+                             "region": self.region,
+                             "tags": self.orig_tags,
+                             "action": "added"}, template="update_tags")
+    def handle_remove(self):
+        for instance in self.region_get_only_instances(instance_ids=self.instances):
+            instance.remove_tags(self.tags)
+        cog.req.append_body({"instances": self.instances,
+                             "region": self.region,
+                             "tags": self.orig_tags,
+                             "action": "removed"}, template="update_tags")
+
+    def handle_rm(self):
+        self.handle_remove()
+
+    def prepare(self):
+        if self.req.arg_count() < 2:
+            self.usage_error()
+        args = self.req.args()
+        self.instances = args[1:]
+        self.region_name = self.req.option("region")
+        try:
+            self.region = boto.ec2.connect_to_region(self.region_name)
+        except Exception as e:
+            Logger.error("Error connecting to EC2: %s" % (e))
+            self.resp.send_error("Cannot connect to EC2")
+        self.orig_tags = self.req.option("tags")
+        self.tags = kv_tag_parse(self.req.option("tags"))
+
+    def usage_error(self):
+        self.resp.send_error("ec2-tags --region=<region> --tags=<tags> [add|remove|rm] ...")

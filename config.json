@@ -13,17 +13,21 @@
                  "path": "templates/empty_result.mustache"},
                 {"name": "list_keypairs",
                  "adapter": "slack",
-                 "path": "templates/list_keypairs.mustache"}],
+                 "path": "templates/list_keypairs.mustache"},
+                {"name": "state_change",
+                 "adapter": "slack",
+                 "path": "templates/state_change.mustache"},
+                {"name": "update_tags",
+                 "adapter": "slack",
+                 "path": "templates/update_tags.mustache"}],
   "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create", "mist:manage-tags", "mist:change-acl"],
   "rules": ["when command is mist:ec2-find must have mist:view",
-            "when command is mist:ec2-stop must have mist:change-state",
-            "when command is mist:ec2-start must have mist:change-state",
-            "when command is mist:ec2-reboot must have mist:change-state",
+            "when command is mist:ec2-state must have mist:change-state",
             "when command is mist:ec2-destroy must have mist:destroy",
             "when command is mist:ec2-create must have mist:create",
             "when command is mist:vpc-list must have mist:view",
             "when command is mist:keypairs-list must have mist:view",
-            "when command is mist:ec2-tag must have mist:manage-tags",
+            "when command is mist:ec2-tags must have mist:manage-tags",
             "when command is mist:s3-buckets must have mist:view",
             "when command is mist:s3-buckets with option[delete] == true must have mist:destroy",
             "when command is mist:s3-bucket-list must have mist:view",
@@ -88,7 +92,7 @@
       ]
     },
     {
-      "name": "ec2-reboot",
+      "name": "ec2-state",
       "version": "0.1",
       "executable": "commands/ec2_state.py",
       "enforcing": true,
@@ -96,43 +100,7 @@
       "env_vars": {
         "PYTHONPATH": "$INSTALL_PATH/lib"
       },
-      "documentation": "mist:ec2-reboot --region=<region> <instance_id>...",
-      "options": [
-        {
-          "type": "string",
-          "required": true,
-          "name": "region"
-        }
-      ]
-    },
-    {
-      "name": "ec2-stop",
-      "version": "0.1",
-      "executable": "commands/ec2_state.py",
-      "enforcing": true,
-      "calling_convention": "bound",
-      "env_vars": {
-        "PYTHONPATH": "$INSTALL_PATH/lib"
-      },
-      "documentation": "mist:ec2-stop --region=<region> <instance_id>...",
-      "options": [
-        {
-          "type": "string",
-          "required": true,
-          "name": "region"
-        }
-      ]
-    },
-    {
-      "name": "ec2-start",
-      "version": "0.1",
-      "executable": "commands/ec2_state.py",
-      "enforcing": true,
-      "calling_convention": "bound",
-      "env_vars": {
-        "PYTHONPATH": "$INSTALL_PATH/lib"
-      },
-      "documentation": "mist:ec2-start --region=<region> <instance_id>...",
+      "documentation": "mist:ec2-state --region=<region> [stop|start|reboot] <instance_id>...",
       "options": [
         {
           "type": "string",
@@ -236,7 +204,7 @@
       ]
     },
     {
-      "name": "ec2-tag",
+      "name": "ec2-tags",
       "version": "0.1",
       "executable": "commands/ec2_tags.py",
       "enforcing": true,
@@ -244,7 +212,7 @@
       "env_vars": {
         "PYTHONPATH": "$INSTALL_PATH/lib"
       },
-      "documentation": "Add or remove EC2 instance tags",
+      "documentation": "mist:ec2-tags --region=<region> --tags=<tags> [add|remove|rm] ...",
       "options": [
         {
           "type": "string",
@@ -255,11 +223,6 @@
           "type": "string",
           "required": true,
           "name": "tags"
-        },
-        {
-          "type": "bool",
-          "required": false,
-          "name": "remove"
         }
       ]
     },
