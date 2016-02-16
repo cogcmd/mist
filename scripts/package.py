@@ -35,3 +35,4 @@ if __name__ == "__main__":
     with open("manifest.json", "w") as f:
         f.truncate()
         f.write(json.dumps(manifest, sort_keys=True, indent=2, separators=(", ", ": ")))
+        f.write("\n")
