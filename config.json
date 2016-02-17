@@ -2,8 +2,7 @@
   "bundle": {
     "name": "mist",
     "type": "foreign",
-    "install": "bin/install.sh",
-    "uninstall": "bin/uninstall.sh"
+    "install": "bin/install.sh"
   },
   "templates": [{"name": "find_instances",
                  "adapter": "slack",
