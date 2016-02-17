@@ -1,0 +1,12 @@
+{{#vpcs}}
+VPC {{id}} in {{region}} is {{state}} with the CIDR block {{cidr_block}}.
+Subnets:
+{{#subnets}}
+-----
+Id: {{id}}
+AZ: {{az}}
+AZ Default? {{az_default}}
+CIDR block: {{cidr_block}}
+Addrs Avaiable: {{available_addrs}}
+{{/subnets}}
+{{/vpcs}}

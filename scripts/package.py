@@ -11,8 +11,10 @@ def scan_for_files(path):
     for root, directories, filenames in os.walk(path):
         relative_name = os.path.basename(root)
         for filename in filenames:
-            files.append({"name": os.path.join(relative_name, filename),
-                          "path": os.path.realpath(os.path.join(root, filename))})
+            path = os.path.realpath(os.path.join(root, filename))
+            if path.find("todo") == -1:
+                files.append({"name": os.path.join(relative_name, filename),
+                              "path": path})
     return files
 
 def hash_file(path):

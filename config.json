@@ -19,8 +19,20 @@
                  "path": "templates/state_change.mustache"},
                 {"name": "update_tags",
                  "adapter": "slack",
-                 "path": "templates/update_tags.mustache"}],
-  "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create", "mist:manage-tags", "mist:change-acl"],
+                 "path": "templates/update_tags.mustache"},
+                {"name": "list_buckets",
+                 "adapter": "slack",
+                 "path": "templates/list_buckets.mustache"},
+                {"name": "delete_buckets",
+                 "adapter": "slack",
+                 "path": "templates/delete_buckets.mustache"},
+                {"name": "list_vpcs",
+                 "adapter": "slack",
+                 "path": "templates/list_vpcs.mustache"},
+                {"name": "list_vpcs_with_subnets",
+                 "adapter": "slack",
+                 "path": "templates/list_vpcs_with_subnets.mustache"}],
+  "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create", "mist:manage-tags"],
   "rules": ["when command is mist:ec2-find must have mist:view",
             "when command is mist:ec2-state must have mist:change-state",
             "when command is mist:ec2-destroy must have mist:destroy",
@@ -29,11 +41,8 @@
             "when command is mist:keypairs-list must have mist:view",
             "when command is mist:ec2-tags must have mist:manage-tags",
             "when command is mist:s3-buckets must have mist:view",
-            "when command is mist:s3-buckets with option[delete] == true must have mist:destroy",
-            "when command is mist:s3-bucket-list must have mist:view",
-            "when command is mist:s3-bucket-list with option[delete] == true must have mist:destroy",
-            "when command is mist:s3-bucket-acl must have mist:view",
-            "when command is mist:s3-bucket-acl with option[set-policy] == /.*/ must have mist:change-acl"],
+            "when command is mist:s3-buckets with arg[0] == 'list' must have mist:view",
+            "when command is mist:s3-buckets with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy"],
   "commands": [
     {
       "name": "ec2-find",
@@ -124,6 +133,11 @@
           "type": "string",
           "required": true,
           "name": "region"
+        },
+        {
+          "type": "bool",
+          "required": false,
+          "name": "subnets"
         }
       ]
     },
@@ -235,69 +249,8 @@
       "env_vars": {
         "PYTHONPATH": "$INSTALL_PATH/lib"
       },
-      "documentation": "List S3 buckets",
-      "options": [
-        {
-          "type": "bool",
-          "required": false,
-          "name": "delete"
-        },
-        {
-          "type": "bool",
-          "required": false,
-          "name": "force"
-        }
-      ]
-    },
-    {
-      "name": "s3-bucket-list",
-      "version": "0.1",
-      "executable": "commands/s3_bucket_list.py",
-      "enforcing": true,
-      "calling_convention": "bound",
-      "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
-        "PYTHONPATH": "$INSTALL_PATH/lib"
-      },
-      "documentation": "s3-bucket-list [--delete --force] <bucket name> <search string> - List contents in a S3 bucket",
-      "options": [
-        {
-          "type": "bool",
-          "required": false,
-          "name": "delete"
-        },
-        {
-          "type": "bool",
-          "required": false,
-          "name": "force"
-        }
-      ]
-    },
-    {
-      "name": "s3-bucket-acl",
-      "version": "0.1",
-      "executable": "commands/s3_bucket_acl.py",
-      "enforcing": true,
-      "calling_convention": "bound",
-      "env_vars": {
-        "AWS_ACCESS_KEY_ID": "",
-        "AWS_SECRET_ACCESS_KEY": "",
-        "PYTHONPATH": "$INSTALL_PATH/lib"
-      },
-      "documentation": "s3-bucket-acl [--set-policy=[public-read, private, public-read-write, authenticated-read] --force] <bucket name> <filename> - Displays or sets the ACL for a S3 bucket",
-      "options": [
-        {
-          "type": "string",
-          "required": false,
-          "name": "set-policy"
-        },
-        {
-          "type": "bool",
-          "required": false,
-          "name": "force"
-        }
-      ]
+      "documentation": "s3-buckets [list|delete] ...",
+      "options": []
     }
   ]
 }
