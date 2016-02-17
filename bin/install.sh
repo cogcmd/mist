@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 install_dir=`pwd`
 
@@ -9,4 +9,4 @@ if [ "${pipcmd}" == "" ]; then
   exit 1
 fi
 
-sudo -H ${pipcmd} install -r ${install_dir}/meta/requirements.txt
+${pipcmd} install -r ${install_dir}/meta/requirements.txt --user
