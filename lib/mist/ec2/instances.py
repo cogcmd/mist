@@ -93,7 +93,7 @@ class FindCommand(Command):
         if ami is not None:
             filters["image_id"] = ami
         if state is not None:
-            filters["instance-state-name"] = cog.get_option("state")
+            filters["instance-state-name"] = state
             filters = self.parse_tags(filters)
         return filters
 
@@ -168,7 +168,7 @@ class FindCommand(Command):
 
 class DestroyCommand(Command):
     def prepare(self):
-        self.region_name = cog.get_option("region")
+        self.region_name = self.req.get_option("region")
         try:
             self.region = boto.ec2.connect_to_region(region_name)
         except Exception as e:
@@ -179,13 +179,13 @@ class DestroyCommand(Command):
     def destroy_instances(self):
         instances = self.req.args()
         if len(instances) == 0:
-            cog.resp.append_body([], template="empty_result")
+            self.resp.append_body([], template="empty_result")
         else:
             try:
                 region.terminate_instances(instances)
-                cog.resp.append_body({"terminated": instances})
+                self.resp.append_body({"terminated": instances})
             except Exception as e:
-                cog.resp.send_error("Error during instance termination: %s" % (e))
+                self.resp.send_error("Error during instance termination: %s" % (e))
 
     def usage_error(self):
         self.resp.send_error("ec2-destroy --region=<region_name> ...")
@@ -234,14 +234,14 @@ class TagCommand(Command):
     def handle_add(self):
         for instance in self.region.get_only_instances(instance_ids=self.instances):
             instance.add_tags(self.tags)
-        cog.req.append_body({"instances": self.instances,
+        self.resp.append_body({"instances": self.instances,
                              "region": self.region,
                              "tags": self.orig_tags,
                              "action": "added"}, template="update_tags")
     def handle_remove(self):
         for instance in self.region_get_only_instances(instance_ids=self.instances):
             instance.remove_tags(self.tags)
-        cog.req.append_body({"instances": self.instances,
+        self.resp.append_body({"instances": self.instances,
                              "region": self.region,
                              "tags": self.orig_tags,
                              "action": "removed"}, template="update_tags")
