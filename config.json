@@ -4,34 +4,57 @@
     "type": "foreign",
     "install": "bin/install.sh"
   },
-  "templates": [{"name": "find_instances",
+  "templates": [
+                {"name": "delete_bucket_files",
                  "adapter": "slack",
-                 "path": "templates/find_instances.mustache"},
-                {"name": "empty_result",
-                 "adapter": "slack",
-                 "path": "templates/empty_result.mustache"},
-                {"name": "list_keypairs",
-                 "adapter": "slack",
-                 "path": "templates/list_keypairs.mustache"},
-                {"name": "state_change",
-                 "adapter": "slack",
-                 "path": "templates/state_change.mustache"},
-                {"name": "update_tags",
-                 "adapter": "slack",
-                 "path": "templates/update_tags.mustache"},
-                {"name": "list_buckets",
-                 "adapter": "slack",
-                 "path": "templates/list_buckets.mustache"},
+                 "path": "templates/delete_bucket_files.mustache"},
                 {"name": "delete_buckets",
                  "adapter": "slack",
                  "path": "templates/delete_buckets.mustache"},
+                {"name": "destroy_instances",
+                 "adapter": "slack",
+                 "path": "templates/destroy_instances.mustache"},
+                {"name": "empty_result",
+                 "adapter": "slack",
+                 "path": "templates/empty_result.mustache"},
+                {"name": "find_instances",
+                 "adapter": "slack",
+                 "path": "templates/find_instances.mustache"},
+                {"name": "list_acls",
+                 "adapter": "slack",
+                 "path": "templates/list_acls.mustache"},
+                {"name": "list_bucket_files",
+                 "adapter": "slack",
+                 "path": "templates/list_bucket_files.mustache"},
+                {"name": "list_buckets",
+                 "adapter": "slack",
+                 "path": "templates/list_buckets.mustache"},
+                {"name": "list_keypairs",
+                 "adapter": "slack",
+                 "path": "templates/list_keypairs.mustache"},
                 {"name": "list_vpcs",
                  "adapter": "slack",
                  "path": "templates/list_vpcs.mustache"},
                 {"name": "list_vpcs_with_subnets",
                  "adapter": "slack",
-                 "path": "templates/list_vpcs_with_subnets.mustache"}],
-  "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create", "mist:manage-tags"],
+                 "path": "templates/list_vpcs_with_subnets.mustache"},
+                {"name": "potential_delete_bucket_files",
+                 "adapter": "slack",
+                 "path": "templates/potential_delete_bucket_files.mustache"},
+                {"name": "potential_set_policy",
+                 "adapter": "slack",
+                 "path": "templates/potential_set_policy.mustache"},
+                {"name": "set_policy",
+                 "adapter": "slack",
+                 "path": "templates/set_policy.mustache"},
+                {"name": "state_change",
+                 "adapter": "slack",
+                 "path": "templates/state_change.mustache"},
+                {"name": "update_tags",
+                 "adapter": "slack",
+                 "path": "templates/update_tags.mustache"}
+  ],
+  "permissions": ["mist:view", "mist:change-state", "mist:destroy", "mist:create", "mist:manage-tags", "mist:change-acl"],
   "rules": ["when command is mist:ec2-find must have mist:view",
             "when command is mist:ec2-state must have mist:change-state",
             "when command is mist:ec2-destroy must have mist:destroy",
@@ -41,7 +64,11 @@
             "when command is mist:ec2-tags must have mist:manage-tags",
             "when command is mist:s3-buckets must have mist:view",
             "when command is mist:s3-buckets with arg[0] == 'list' must have mist:view",
-            "when command is mist:s3-buckets with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy"],
+            "when command is mist:s3-buckets with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy",
+            "when command is mist:s3-bucket-list must have mist:view",
+            "when command is mist:s3-bucket-list with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy",
+            "when command is mist:s3-bucket-acl must have mist:view",
+            "when command is mist:s3-bucket-acl with option[set-policy] == /.*/ must have mist:change-acl"],
   "commands": [
     {
       "name": "ec2-find",
@@ -250,6 +277,72 @@
       },
       "documentation": "s3-buckets [list|delete] ...",
       "options": []
+    },
+    {
+      "name": "s3-bucket-list",
+      "version": "0.1",
+      "executable": "commands/s3_bucket_list.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "PYTHONPATH": "$INSTALL_PATH/lib"
+      },
+      "documentation": "s3-bucket-list [delete|list] --force --bucket=<bucket name> --file=<search string> - List contents in a S3 bucket",
+      "options": [
+        {
+          "type": "string",
+          "required": false,
+          "name": "bucket"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "file"
+        },
+        {
+          "type": "bool",
+          "required": false,
+          "name": "delete"
+        },
+        {
+          "type": "bool",
+          "required": false,
+          "name": "force"
+        }
+      ]
+    },
+    {
+      "name": "s3-bucket-acl",
+      "version": "0.1",
+      "executable": "commands/s3_bucket_acl.py",
+      "enforcing": true,
+      "calling_convention": "bound",
+      "env_vars": {
+        "PYTHONPATH": "$INSTALL_PATH/lib"
+      },
+      "documentation": "s3-bucket-acl [set|list] [--policy=[public-read, private, public-read-write, authenticated-read] --force] --bucket=<bucket name> --file=<filename> - Displays or sets the ACL for a S3 bucket",
+      "options": [
+        {
+          "type": "string",
+          "required": false,
+          "name": "bucket"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "file"
+        },
+        {
+          "type": "string",
+          "required": false,
+          "name": "policy"
+        },
+        {
+          "type": "bool",
+          "required": false,
+          "name": "force"
+        }
+      ]
     }
   ]
 }
