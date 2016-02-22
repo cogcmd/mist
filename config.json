@@ -65,8 +65,8 @@
             "when command is mist:s3-buckets must have mist:view",
             "when command is mist:s3-buckets with arg[0] == 'list' must have mist:view",
             "when command is mist:s3-buckets with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy",
-            "when command is mist:s3-bucket-list must have mist:view",
-            "when command is mist:s3-bucket-list with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy",
+            "when command is mist:s3-bucket-files must have mist:view",
+            "when command is mist:s3-bucket-files with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy",
             "when command is mist:s3-bucket-acl must have mist:view",
             "when command is mist:s3-bucket-acl with option[set-policy] == /.*/ must have mist:change-acl"],
   "commands": [
@@ -279,15 +279,15 @@
       "options": []
     },
     {
-      "name": "s3-bucket-list",
+      "name": "s3-bucket-files",
       "version": "0.1",
-      "executable": "commands/s3_bucket_list.py",
+      "executable": "commands/s3_bucket_files.py",
       "enforcing": true,
       "calling_convention": "bound",
       "env_vars": {
         "PYTHONPATH": "$INSTALL_PATH/lib"
       },
-      "documentation": "s3-bucket-list [delete|list] --force --bucket=<bucket name> --file=<search string> - List contents in a S3 bucket",
+      "documentation": "s3-bucket-files [delete|list] --force --bucket=<bucket name> --file=<search string> - List contents in a S3 bucket",
       "options": [
         {
           "type": "string",

@@ -113,7 +113,7 @@ class BucketAclCommand(S3Command):
         self.resp.send_error("s3-bucket-acl [set|list] [--policy=[public-read, private, public-read-write, authenticated-read] --force] <bucket name> <filename>")
 
 
-class BucketListCommand(S3Command):
+class BucketFileCommand(S3Command):
 
     def prepare(self):
         self.connect()
@@ -154,4 +154,4 @@ class BucketListCommand(S3Command):
         self.resp.append_body({"file_paths": self.package()}, template="list_bucket_files")
 
     def usage_error(self):
-        self.resp.send_error("s3-bucket-list [delete|list] [--force] --bucket=<bucket name> --file=<filename>")
+        self.resp.send_error("s3-bucket-files [delete|list] [--force] --bucket=<bucket name> --file=<filename>")
