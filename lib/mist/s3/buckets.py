@@ -42,13 +42,14 @@ class ListBucketsCommand(S3Command):
                 for bucket in buckets:
                     bucket.delete()
             except Exception as e:
-                Logger.error("Error deleting S3 bucket '%s': %s" % (buckets[0].name, e))
-                self.resp.send_error("Error deleting bucket '%s': %s" % (buckets[0].name, e))
+                bucketnames = [bucket.name for bucket in buckets]
+                Logger.error("Error deleting S3 buckets (%s): %s" % (bucketnames, e))
+                self.resp.send_error("Error deleting buckets '%s': %s" % (bucketnames, e))
             if len(buckets) == 0:
                 self.resp.append_body([], template="empty_result")
             else:
                 bucket_names = [bucket.name for bucket in buckets]
-                self.resp.append_body({"buckets": ", ".join(bucket_names)}, template="delete_buckets")
+                self.resp.append_body({"buckets": bucket_names}, template="delete_buckets")
         except Exception as e:
             self.resp.send_error("One of the following regular expressions is invalid: %s, %s" % (args[1:], e))
 
@@ -72,7 +73,7 @@ class ListBucketsCommand(S3Command):
         elif len(errors) > 1:
             self.resp.send_error("The bucket names: `%s` are not unique names. Please choose different names." % (", ".join(errors)))
         else:
-            self.resp.append_body({"buckets": ", ".join(buckets)}, template="create_buckets")
+            self.resp.append_body({"buckets": buckets}, template="create_buckets")
 
 
 class BucketAclCommand(S3Command):
