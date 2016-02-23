@@ -2,6 +2,7 @@ import re
 
 from cog.logger import Logger
 from mist.s3 import S3Command
+from boto.exception import S3CreateError
 
 class ListBucketsCommand(S3Command):
 
@@ -37,21 +38,42 @@ class ListBucketsCommand(S3Command):
         try:
             patterns = [re.compile(arg) for arg in args[1:]]
             buckets = self.find_matching(patterns)
-            bucket_names = [{"bucket": bucket.name} for bucket in buckets]
             try:
-                while len(buckets) > 0:
-                    bucket = buckets[0]
+                for bucket in buckets:
                     bucket.delete()
-                    buckets = buckets[1:]
             except Exception as e:
-                Logger.error("Error deleting S3 bucket '%s': %s" & (buckets[0].name, e))
-                self.resp.send_error("Error deleting bucket '%s': %s" % (buckets[0].name, e))
+                bucketnames = [bucket.name for bucket in buckets]
+                Logger.error("Error deleting S3 buckets (%s): %s" % (bucketnames, e))
+                self.resp.send_error("Error deleting buckets '%s': %s" % (bucketnames, e))
             if len(buckets) == 0:
                 self.resp.append_body([], template="empty_result")
             else:
-                self.resp.append_body({"buckets": buckets}, template="delete_buckets")
+                bucket_names = [bucket.name for bucket in buckets]
+                self.resp.append_body({"buckets": bucket_names}, template="delete_buckets")
         except Exception as e:
-            self.resp.send_error("One of the following regular expressions is invalid: %s" % (args[1:]))
+            self.resp.send_error("One of the following regular expressions is invalid: %s, %s" % (args[1:], e))
+
+    def handle_create(self):
+        self.handle_new()
+
+    def handle_new(self):
+        if self.req.arg_count() < 2:
+            self.usage_error()
+        buckets = self.req.args()[1:]
+        errors = []
+        for bucketname in buckets:
+            try:
+                bucket = self.conn.create_bucket(bucketname)
+            except S3CreateError:
+                errors.append(bucketname)
+            except Exception as e:
+                self.resp.send_error("There was a problem creating the S3 bucket(s): %s" % (e))
+        if len(errors) == 1:
+            self.resp.send_error("The bucket name `%s` is not a unique name. Please choose a different name." % (errors[0]))
+        elif len(errors) > 1:
+            self.resp.send_error("The bucket names: `%s` are not unique names. Please choose different names." % (", ".join(errors)))
+        else:
+            self.resp.append_body({"buckets": buckets}, template="create_buckets")
 
 
 class BucketAclCommand(S3Command):

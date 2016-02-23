@@ -5,6 +5,9 @@
     "install": "bin/install.sh"
   },
   "templates": [
+                {"name": "create_buckets",
+                 "adapter": "slack",
+                 "path": "templates/create_buckets.mustache"},
                 {"name": "delete_bucket_files",
                  "adapter": "slack",
                  "path": "templates/delete_bucket_files.mustache"},
@@ -275,7 +278,7 @@
       "env_vars": {
         "PYTHONPATH": "$INSTALL_PATH/lib"
       },
-      "documentation": "s3-buckets [list|delete] ...",
+      "documentation": "s3-buckets [list|delete|create] ...",
       "options": []
     },
     {
