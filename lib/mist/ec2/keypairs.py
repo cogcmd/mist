@@ -1,9 +1,7 @@
-import boto.ec2
-
 from cog.logger import Logger
-from cog.command import Command
+from mist.ec2 import EC2Command
 
-class ListKeypairsCommand(Command):
+class ListKeypairsCommand(EC2Command):
     def list_keypairs(self):
         keypairs = []
         names = self.req.args()
@@ -19,12 +17,7 @@ class ListKeypairsCommand(Command):
             self.resp.append_body({"keypairs": keypairs}, template="list_keypairs")
 
     def prepare(self):
-        self.region_name = self.req.option("region")
-        try:
-            self.region = boto.ec2.connect_to_region(self.region_name)
-        except Exception as e:
-            Logger.error("Error connecting to EC2: %s" % (e))
-            self.resp.send_error("Cannot connect to EC2")
+        self.connect()
         self.handlers["default"] = self.list_keypairs
 
     def usage_error(self):
