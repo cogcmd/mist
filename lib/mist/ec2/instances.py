@@ -94,7 +94,7 @@ class FindCommand(Command):
             filters["image_id"] = ami
         if state is not None:
             filters["instance-state-name"] = state
-            filters = self.parse_tags(filters)
+        filters = self.parse_tags(filters)
         return filters
 
     def format_results(self, instances):
