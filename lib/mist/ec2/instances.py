@@ -1,7 +1,5 @@
-import boto.ec2
-
 from cog.logger import Logger
-from cog.command import Command
+from mist.ec2 import EC2Command
 
 def kv_tag_parse(tags):
     parsed = {}
@@ -15,7 +13,7 @@ def kv_tag_parse(tags):
                 parsed[kv[0]] = ""
     return parsed
 
-class CreateCommand(Command):
+class CreateCommand(EC2Command):
     def tag_instances(self, instance_ids, tags):
         instances = self.region.get_only_instances(instance_ids = instance_ids)
         for instance in instances:
@@ -37,12 +35,7 @@ class CreateCommand(Command):
         self.resp.append_body({"instances": instance_ids}, template="create_instances")
 
     def prepare(self):
-        region_name = self.req.option("region")
-        try:
-            self.region = boto.ec2.connect_to_region(region_name)
-        except Exception as e:
-            Logger.error("Error connecting to EC2: %s" % (e))
-            self.resp.send_error("Cannot connect to EC2")
+        self.connect()
         self.instance_type = self.req.option("type")
         self.ami = self.req.option("ami")
         self.keypair = self.req.option("keypair")
@@ -60,7 +53,7 @@ class CreateCommand(Command):
         self.resp.send_error("ec2-create --region=<region> --type=<type> --ami=<ami> --keypair=<keypair> instance_count")
 
 
-class FindCommand(Command):
+class FindCommand(EC2Command):
     def update_dict(self, data, key, value):
         if data.has_key(key):
             existing = data[key]
@@ -78,11 +71,10 @@ class FindCommand(Command):
                 if len(parsed) == 2:
                     key = "tag:" + parsed[0]
                     self.update_dict(filters, key, parsed[1])
+                elif parsed[0] == "":
+                    self.update_dict(filters, "tag-value", parsed[1])
                 else:
-                    if parsed[0] == "":
-                        self.update_dict(filters, "tag-value", parsed[1])
-                    else:
-                        self.update_dict(filters, "tag-key", parsed[0])
+                    self.update_dict(filters, "tag-key", parsed[0])
         return filters
 
     def build_filters(self):
@@ -153,12 +145,7 @@ class FindCommand(Command):
             self.resp.append_body(formatted)
 
     def prepare(self):
-        self.region_name = self.req.option("region")
-        try:
-            self.region = boto.ec2.connect_to_region(self.region_name)
-        except Exception as e:
-            Logger.error("Error connecting to EC2: %s" % (e))
-            self.resp.send_error("Cannot connect to EC2")
+        self.connect()
         self.parse_returned_fields()
         self.handlers["default"] = self.find_instances
 
@@ -166,14 +153,9 @@ class FindCommand(Command):
         self.send_error("ec2-find --region=<region_name> ...")
 
 
-class DestroyCommand(Command):
+class DestroyCommand(EC2Command):
     def prepare(self):
-        self.region_name = self.req.get_option("region")
-        try:
-            self.region = boto.ec2.connect_to_region(region_name)
-        except Exception as e:
-            Logger.error("Connecting to EC2 failed: %s" % (e))
-            self.resp.send_error("Connecting to EC2 failed")
+        self.connect()
         self.handlers["default"] = self.destroy_instances
 
     def destroy_instances(self):
@@ -182,7 +164,7 @@ class DestroyCommand(Command):
             self.resp.append_body([], template="empty_result")
         else:
             try:
-                region.terminate_instances(instances)
+                self.region.terminate_instances(instances)
                 self.resp.append_body({"terminated": instances})
             except Exception as e:
                 self.resp.send_error("Error during instance termination: %s" % (e))
@@ -191,7 +173,7 @@ class DestroyCommand(Command):
         self.resp.send_error("ec2-destroy --region=<region_name> ...")
 
 
-class ChangeStateCommand(Command):
+class ChangeStateCommand(EC2Command):
     def handle_reboot(self):
         if len(self.instances) > 0:
             self.region.reboot_instances(self.instances)
@@ -214,12 +196,7 @@ class ChangeStateCommand(Command):
                                "action": "started"}, template="state_change")
 
     def prepare(self):
-        self.region_name = self.req.option("region")
-        try:
-            self.region = boto.ec2.connect_to_region(self.region_name)
-        except Exception as e:
-            Logger.error("Error connecting to EC2: %s" % (e))
-            self.resp.send_error("Cannot connect to EC2")
+        self.connect()
         args = self.req.args()
         if len(args) < 2:
             self.usage_error()
@@ -230,7 +207,7 @@ class ChangeStateCommand(Command):
         self.resp.send_error("ec2-state [start|stop|reboot] ...")
 
 
-class TagCommand(Command):
+class TagCommand(EC2Command):
     def handle_add(self):
         for instance in self.region.get_only_instances(instance_ids=self.instances):
             instance.add_tags(self.tags)
@@ -254,12 +231,7 @@ class TagCommand(Command):
             self.usage_error()
         args = self.req.args()
         self.instances = args[1:]
-        self.region_name = self.req.option("region")
-        try:
-            self.region = boto.ec2.connect_to_region(self.region_name)
-        except Exception as e:
-            Logger.error("Error connecting to EC2: %s" % (e))
-            self.resp.send_error("Cannot connect to EC2")
+        self.connect()
         self.orig_tags = self.req.option("tags")
         self.tags = kv_tag_parse(self.req.option("tags"))
 
