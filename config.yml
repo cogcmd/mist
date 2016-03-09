@@ -1,0 +1,263 @@
+---
+bundle:
+  name: mist
+  type: foreign
+  install: bin/install.sh
+templates:
+- name: create_buckets
+  adapter: slack
+  path: templates/create_buckets.mustache
+- name: delete_bucket_files
+  adapter: slack
+  path: templates/delete_bucket_files.mustache
+- name: delete_buckets
+  adapter: slack
+  path: templates/delete_buckets.mustache
+- name: destroy_instances
+  adapter: slack
+  path: templates/destroy_instances.mustache
+- name: empty_result
+  adapter: slack
+  path: templates/empty_result.mustache
+- name: find_instances
+  adapter: slack
+  path: templates/find_instances.mustache
+- name: list_acls
+  adapter: slack
+  path: templates/list_acls.mustache
+- name: list_bucket_files
+  adapter: slack
+  path: templates/list_bucket_files.mustache
+- name: list_buckets
+  adapter: slack
+  path: templates/list_buckets.mustache
+- name: list_keypairs
+  adapter: slack
+  path: templates/list_keypairs.mustache
+- name: list_vpcs
+  adapter: slack
+  path: templates/list_vpcs.mustache
+- name: list_vpcs_with_subnets
+  adapter: slack
+  path: templates/list_vpcs_with_subnets.mustache
+- name: potential_delete_bucket_files
+  adapter: slack
+  path: templates/potential_delete_bucket_files.mustache
+- name: potential_set_policy
+  adapter: slack
+  path: templates/potential_set_policy.mustache
+- name: set_policy
+  adapter: slack
+  path: templates/set_policy.mustache
+- name: state_change
+  adapter: slack
+  path: templates/state_change.mustache
+- name: update_tags
+  adapter: slack
+  path: templates/update_tags.mustache
+permissions:
+- mist:view
+- mist:change-state
+- mist:destroy
+- mist:create
+- mist:manage-tags
+- mist:change-acl
+rules:
+- when command is mist:ec2-find must have mist:view
+- when command is mist:ec2-state must have mist:change-state
+- when command is mist:ec2-destroy must have mist:destroy
+- when command is mist:ec2-create must have mist:create
+- when command is mist:vpc-list must have mist:view
+- when command is mist:keypairs-list must have mist:view
+- when command is mist:ec2-tags must have mist:manage-tags
+- when command is mist:s3-buckets must have mist:view
+- when command is mist:s3-buckets with arg[0] == 'list' must have mist:view
+- when command is mist:s3-buckets with (arg[0] == 'delete' or arg[0] == 'rm') must
+  have mist:destroy
+- when command is mist:s3-bucket-files must have mist:view
+- when command is mist:s3-bucket-files with (arg[0] == 'delete' or arg[0] == 'rm')
+  must have mist:destroy
+- when command is mist:s3-bucket-acl must have mist:view
+- when command is mist:s3-bucket-acl with option[set-policy] == /.*/ must have mist:change-acl
+commands:
+- name: ec2-find
+  version: '0.1'
+  executable: commands/ec2_find.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: mist:ec2-find --region=<region> [--state | --tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,tags)]
+  options:
+  - type: string
+    required: true
+    name: region
+  - type: string
+    required: false
+    name: tags
+  - type: string
+    required: false
+    name: ami
+  - type: string
+    required: false
+    name: state
+  - type: string
+    required: false
+    name: return
+- name: ec2-destroy
+  version: '0.1'
+  executable: commands/ec2_destroy.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: mist:ec2-destroy --region=<region> <instance_id>...
+  options:
+  - type: string
+    required: true
+    name: region
+- name: ec2-state
+  version: '0.1'
+  executable: commands/ec2_state.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: mist:ec2-state --region=<region> [stop|start|reboot] <instance_id>...
+  options:
+  - type: string
+    required: true
+    name: region
+- name: vpc-list
+  version: '0.1'
+  executable: commands/ec2_vpcs.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: mist:vpc-list --region=<region>
+  options:
+  - type: string
+    required: true
+    name: region
+  - type: bool
+    required: false
+    name: subnets
+- name: keypairs-list
+  version: '0.1'
+  executable: commands/ec2_keypairs.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: mist:keypairs-list --region=<region> <name> ...
+  options:
+  - type: string
+    required: true
+    name: region
+- name: ec2-create
+  version: '0.1'
+  executable: commands/ec2_create.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: mist:ec2-create --region=<region> --type=<type> --ami=<ami> --keypair=<pair>
+    --az=<az> --vpc=<vpc> --tags=<tags> --user-data=<user_data>
+  options:
+  - type: string
+    required: true
+    name: region
+  - type: string
+    required: true
+    name: type
+  - type: string
+    required: true
+    name: ami
+  - type: string
+    required: true
+    name: keypair
+  - type: string
+    required: false
+    name: az
+  - type: string
+    required: false
+    name: vpc
+  - type: string
+    required: false
+    name: tags
+  - type: string
+    required: false
+    name: user-data
+  - type: int
+    required: false
+    name: count
+- name: ec2-tags
+  version: '0.1'
+  executable: commands/ec2_tags.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: mist:ec2-tags --region=<region> --tags=<tags> [add|remove|rm] ...
+  options:
+  - type: string
+    required: true
+    name: region
+  - type: string
+    required: true
+    name: tags
+- name: s3-buckets
+  version: '0.1'
+  executable: commands/s3_buckets.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: s3-buckets [list|delete|create] ...
+  options: []
+- name: s3-bucket-files
+  version: '0.1'
+  executable: commands/s3_bucket_files.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: s3-bucket-files [delete|list] --force --bucket=<bucket name> --file=<search
+    string> - List contents in a S3 bucket
+  options:
+  - type: string
+    required: false
+    name: bucket
+  - type: string
+    required: false
+    name: file
+  - type: bool
+    required: false
+    name: delete
+  - type: bool
+    required: false
+    name: force
+- name: s3-bucket-acl
+  version: '0.1'
+  executable: commands/s3_bucket_acl.py
+  enforcing: true
+  calling_convention: bound
+  env_vars:
+    PYTHONPATH: "$INSTALL_PATH/lib"
+  documentation: s3-bucket-acl [set|list] [--policy=[public-read, private, public-read-write,
+    authenticated-read] --force] --bucket=<bucket name> --file=<filename> - Displays
+    or sets the ACL for a S3 bucket
+  options:
+  - type: string
+    required: false
+    name: bucket
+  - type: string
+    required: false
+    name: file
+  - type: string
+    required: false
+    name: policy
+  - type: bool
+    required: false
+    name: force
