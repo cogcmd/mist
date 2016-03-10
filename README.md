@@ -33,10 +33,10 @@ mist:change-acl
 
 ## Building
 
-To build the bundle, run the following:
+To build the bundle you will need python, pip. Then just run the following:
 
 ```
-make
+make install && make
 ```
 
 This should create a `mist.cog` file in the current directory.
