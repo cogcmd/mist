@@ -4,12 +4,12 @@ import yaml
 import sys
 
 if __name__ == "__main__":
-    with open("config.yml", "r") as f:
+    with open("config.yaml", "r") as f:
         try:
             contents = f.read()
             yaml.load(contents)
-            print "config.yml validated successfully."
+            print "config.yaml validated successfully."
         except ValueError as e:
-            print "config.yml failed validation: %s" % (e.message)
+            print "config.yaml failed validation: %s" % (e.message)
             sys.exit(2)
 
