@@ -15,10 +15,10 @@ clean:
 install:
 	pip install -r meta/requirements.txt --user
 
-$(BUNDLE_NAME).cog: Makefile manifest.json config.yml $(SRC_FILES)
+$(BUNDLE_NAME).cog: Makefile manifest.json config.yaml $(SRC_FILES)
 	make validate-config
 	mkdir -p $(WORK_DIR)
-	cp manifest.json config.yml $(WORK_DIR)
+	cp manifest.json config.yaml $(WORK_DIR)
 	cp -R $(SRC_DIRS) $(WORK_DIR)/
 	cd $(BUILD_DIR) && zip -r $(BUNDLE_NAME).cog $(BUNDLE_NAME)
 	mv $(BUILD_DIR)/$(BUNDLE_NAME).cog .
