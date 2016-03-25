@@ -84,7 +84,6 @@ commands:
   version: '0.1'
   executable: commands/ec2_find.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: mist:ec2-find --region=<region> [--state | --tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,tags)]
@@ -108,7 +107,6 @@ commands:
   version: '0.1'
   executable: commands/ec2_destroy.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: mist:ec2-destroy --region=<region> <instance_id>...
@@ -120,7 +118,6 @@ commands:
   version: '0.1'
   executable: commands/ec2_state.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: mist:ec2-state --region=<region> [stop|start|reboot] <instance_id>...
@@ -132,7 +129,6 @@ commands:
   version: '0.1'
   executable: commands/ec2_vpcs.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: mist:vpc-list --region=<region>
@@ -147,7 +143,6 @@ commands:
   version: '0.1'
   executable: commands/ec2_keypairs.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: mist:keypairs-list --region=<region> <name> ...
@@ -159,7 +154,6 @@ commands:
   version: '0.1'
   executable: commands/ec2_create.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: mist:ec2-create --region=<region> --type=<type> --ami=<ami> --keypair=<pair>
@@ -196,7 +190,6 @@ commands:
   version: '0.1'
   executable: commands/ec2_tags.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: mist:ec2-tags --region=<region> --tags=<tags> [add|remove|rm] ...
@@ -211,7 +204,6 @@ commands:
   version: '0.1'
   executable: commands/s3_buckets.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: s3-buckets [list|delete|create] ...
@@ -220,7 +212,6 @@ commands:
   version: '0.1'
   executable: commands/s3_bucket_files.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: s3-bucket-files [delete|list] --force --bucket=<bucket name> --file=<search
@@ -242,7 +233,6 @@ commands:
   version: '0.1'
   executable: commands/s3_bucket_acl.py
   enforcing: true
-  calling_convention: bound
   env_vars:
     PYTHONPATH: "$INSTALL_PATH/lib"
   documentation: s3-bucket-acl [set|list] [--policy=[public-read, private, public-read-write,
