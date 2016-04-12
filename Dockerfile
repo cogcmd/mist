@@ -7,6 +7,7 @@ RUN apk-install \
     python \
     py-pip \
     python-dev \
+    ca-certificates \
     git
 
 # Copy source
