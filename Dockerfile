@@ -7,18 +7,15 @@ RUN apk-install \
     python \
     py-pip \
     python-dev \
-    ca-certificates \
-    git
+    ca-certificates
 
 # Copy source
 COPY . /mist
 
 # Install deps and tidy up
-RUN cd /mist && pip install -r meta/requirements.txt \
-  && apk del git && rm -rf /var/cache/apk/*
-
-RUN mkdir /usr/lib/python2.7/site-packages/mist \
-  && cp -R /mist/lib/mist/* /usr/lib/python2.7/site-packages/mist
-
-RUN chmod +x /mist/commands/* && mv /mist/commands/* /usr/local/bin
-RUN rm -rf /mist
+RUN apk-install git && cd /mist && pip install -r meta/requirements.txt \
+  && apk del git && rm -rf /var/cache/apk/* \
+  && mkdir /usr/lib/python2.7/site-packages/mist \
+  && cp -R /mist/lib/mist/* /usr/lib/python2.7/site-packages/mist \
+  && chmod +x /mist/commands/* && mv /mist/commands/* /usr/local/bin \
+  && rm -rf /mist
