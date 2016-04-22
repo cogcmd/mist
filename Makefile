@@ -7,5 +7,5 @@ TAG                = cogcmd/mist:0.5
 
 .PHONY: make-bundle validate-config
 
-all: Makefile manifest.json config.yaml $(SRC_FILES)
+all: Makefile config.yaml $(SRC_FILES)
 	docker build -t $(TAG) .
