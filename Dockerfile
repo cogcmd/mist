@@ -1,4 +1,4 @@
-FROM gliderlabs/alpine:3.3
+FROM gliderlabs/alpine:latest
 
 MAINTAINER Kevin Smith <kevin@operable.io>
 
