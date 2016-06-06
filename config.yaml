@@ -1,7 +1,8 @@
 ---
-cog_bundle_version: 2
+cog_bundle_version: 3
 
 name: mist
+description: "Basic interaction with EC2 instances and S3 buckets"
 version: 0.5.0
 permissions:
 - mist:view
