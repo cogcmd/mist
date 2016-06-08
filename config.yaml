@@ -17,6 +17,7 @@ docker:
 commands:
   ec2-find:
     executable: /usr/local/bin/ec2_find
+    description: "Finds an ec2 instances"
     documentation: mist:ec2-find --region=<region> [--state | --tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,tags)]
     options:
       region:
@@ -38,6 +39,7 @@ commands:
       - must have mist:view
   ec2-destroy:
     executable: /usr/local/bin/ec2_destroy
+    description: "Destroys EC2 instances"
     documentation: mist:ec2-destroy --region=<region> <instance_id>...
     options:
       region:
@@ -47,6 +49,7 @@ commands:
       - must have mist:destroy
   ec2-state:
     executable: /usr/local/bin/ec2_state
+    description: "Starts, stops or reboots an EC2 instance"
     documentation: mist:ec2-state --region=<region> [stop|start|reboot] <instance_id>...
     options:
       region:
@@ -56,6 +59,7 @@ commands:
       - must have mist:change-state
   vpc-list:
     executable: /usr/local/bin/ec2_vpcs
+    description: "Lists VPCs"
     documentation: mist:vpc-list --region=<region>
     options:
       region:
@@ -68,6 +72,7 @@ commands:
       - must have mist:view
   keypairs-list:
     executable: /usr/local/bin/ec2_keypairs
+    description: "Lists keypairs"
     documentation: mist:keypairs-list --region=<region> <name> ...
     options:
       region:
@@ -77,6 +82,7 @@ commands:
       - must have mist:view
   ec2-create:
     executable: /usr/local/bin/ec2_create
+    description: "Creates a new EC2 instance"
     documentation: mist:ec2-create --region=<region> --type=<type> --ami=<ami> --keypair=<pair> --az=<az> --vpc=<vpc> --tags=<tags> --user-data=<user_data>
     options:
       region:
@@ -110,6 +116,7 @@ commands:
       - must have mist:create
   ec2-tags:
     executable: /usr/local/bin/ec2_tags
+    description: "Manages EC2 tags"
     documentation: mist:ec2-tags --region=<region> --tags=<tags> [add|remove|rm] ...
     options:
       region:
@@ -122,6 +129,7 @@ commands:
       - must have mist:manage-tags
   s3-buckets:
     executable: /usr/local/bin/s3_buckets
+    description: "Manages S3 buckets"
     documentation: s3-buckets [list|delete|create] ...
     rules:
       - must have mist:view
@@ -129,6 +137,7 @@ commands:
       - with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy
   s3-bucket-files:
     executable: /usr/local/bin/s3_bucket_files
+    description: "Manages files in S3 buckets"
     documentation: s3-bucket-files [delete|list] --force --bucket=<bucket name> --file=<search string> - List contents in a S3 bucket
     options:
       bucket:
@@ -148,6 +157,7 @@ commands:
       - with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy
   s3-bucket-acl:
     executable: /usr/local/bin/s3_bucket_acl
+    description: "Manages S3 buckets ACLs"
     documentation: s3-bucket-acl [set|list] [--policy=[public-read, private, public-read-write, authenticated-read] --force] --bucket=<bucket name> --file=<filename> - Displays  or sets the ACL for a S3 bucket
     options:
       bucket:
