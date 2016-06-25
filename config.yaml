@@ -17,7 +17,7 @@ docker:
 commands:
   ec2-find:
     executable: /usr/local/bin/ec2_find
-    description: "Finds an ec2 instances"
+    description: "Finds an ec2 instance"
     documentation: mist:ec2-find --region=<region> [--state | --tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,tags)]
     options:
       region:
