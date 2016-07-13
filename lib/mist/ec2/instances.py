@@ -55,7 +55,7 @@ class CreateCommand(EC2Command):
 
 class FindCommand(EC2Command):
     def update_dict(self, data, key, value):
-        if data.has_key(key):
+        if key in data:
             existing = data[key]
             data[key] = existing.append(value)
         else:

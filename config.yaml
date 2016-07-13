@@ -12,7 +12,7 @@ permissions:
 - mist:change-acl
 docker:
   image: cogcmd/mist
-  tag: "0.4"
+  tag: "0.5"
 commands:
   ec2-find:
     executable: /usr/local/bin/ec2_find
