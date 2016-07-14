@@ -1,17 +1,17 @@
-import re
-
 from boto.s3.connection import S3Connection
-from cog.logger import Logger
 from cog.command import Command
 
-class S3Command(Command):
+import re
+
+class Base(Command):
 
     def connect(self):
         try:
             self.conn = S3Connection()
         except Exception as e:
             Logger.error("Failed connecting to S3: %s" % (e))
-            self.resp.send_error("S3 connection failed.")
+            self.abort()
+            self.response.string("S3 connection failed.").send()
 
     def get_buckets(self):
         return self.conn.get_all_buckets()
@@ -34,7 +34,8 @@ class S3Command(Command):
             return [bucket for bucket in self.conn.get_all_buckets() if self.name_matches(bucket.name, patterns)]
         except Exception as e:
             Logger.error("S3 error: %s" % (e))
-            self.resp.send_error("S3 error")
+            self.abort()
+            self.response.string("S3 error %s" % (e)).send()
 
     def path_match(self, file_key):
         match = False
@@ -48,4 +49,3 @@ class S3Command(Command):
         for bucket in buckets:
             bucket_file_keys += self.get_filekeys(bucket)
         return [file_key for file_key in bucket_file_keys if self.path_match(file_key)]
-

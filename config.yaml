@@ -12,11 +12,11 @@ permissions:
 - mist:change-acl
 docker:
   image: cogcmd/mist
-  tag: "0.5"
+  tag: "pycog3"
 commands:
-  ec2-find:
-    executable: /usr/local/bin/ec2_find
-    documentation: mist:ec2-find --region=<region> [--state | --tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,tags)]
+  ec2_find:
+    executable: /usr/bin/cog-command
+    documentation: mist:ec2_find --region=<region> [--state | --tags | --ami | --return=(id,pubdns,privdns,state,keyname,ami,kernel,arch,vpc,pubip,privip,az,tags)]
     options:
       region:
         type: string
@@ -35,8 +35,8 @@ commands:
         required: false
     rules:
       - must have mist:view
-  ec2-destroy:
-    executable: /usr/local/bin/ec2_destroy
+  ec2_destroy:
+    executable: /usr/bin/cog-command
     documentation: mist:ec2-destroy --region=<region> <instance_id>...
     options:
       region:
@@ -44,18 +44,18 @@ commands:
         required: true
     rules:
       - must have mist:destroy
-  ec2-state:
-    executable: /usr/local/bin/ec2_state
-    documentation: mist:ec2-state --region=<region> [stop|start|reboot] <instance_id>...
+  ec2_state:
+    executable: /usr/bin/cog-command
+    documentation: mist:ec2_state --region=<region> [stop|start|reboot] <instance_id>...
     options:
       region:
         type: string
         required: true
     rules:
       - must have mist:change-state
-  vpc-list:
-    executable: /usr/local/bin/ec2_vpcs
-    documentation: mist:vpc-list --region=<region>
+  vpc_list:
+    executable: /usr/bin/cog-command
+    documentation: "mist:vpc_list --region=<region> [--subnets] [vpc1, ...]"
     options:
       region:
         type: string
@@ -65,18 +65,18 @@ commands:
         required: false
     rules:
       - must have mist:view
-  keypairs-list:
-    executable: /usr/local/bin/ec2_keypairs
-    documentation: mist:keypairs-list --region=<region> <name> ...
+  keypairs_list:
+    executable: /usr/bin/cog-command
+    documentation: mist:keypairs_list --region=<region> <name> ...
     options:
       region:
         type: string
         required: true
     rules:
       - must have mist:view
-  ec2-create:
-    executable: /usr/local/bin/ec2_create
-    documentation: mist:ec2-create --region=<region> --type=<type> --ami=<ami> --keypair=<pair> --az=<az> --vpc=<vpc> --tags=<tags> --user-data=<user_data>
+  ec2_create:
+    executable: /usr/bin/cog-command
+    documentation: mist:ec2_create --region=<region> --type=<type> --ami=<ami> --keypair=<pair> --az=<az> --vpc=<vpc> --tags=<tags> --user-data=<user_data>
     options:
       region:
         type: string
@@ -108,8 +108,8 @@ commands:
     rules:
       - must have mist:create
   ec2-tags:
-    executable: /usr/local/bin/ec2_tags
-    documentation: mist:ec2-tags --region=<region> --tags=<tags> [add|remove|rm] ...
+    executable: /usr/bin/cog-command
+    documentation: mist:ec2_tags --region=<region> --tags=<tags> [add|remove|rm] ...
     options:
       region:
         type: string
@@ -119,13 +119,33 @@ commands:
         required: true
     rules:
       - must have mist:manage-tags
-  s3-buckets:
-    executable: /usr/local/bin/s3_buckets
-    documentation: s3-buckets [list|delete|create] ...
+  s3_buckets:
+    executable: /usr/bin/s3_buckets
+    documentation: s3_buckets [list|delete|create] ...
     rules:
       - must have mist:view
       - with arg[0] == 'list' must have mist:view
       - with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy
+  s3_bucket_acl:
+    executable: /usr/bin/cog-command
+    documentation: s3_bucket_acl [set|list] [--policy=[public-read, private, public-read-write, authenticated-read] --force] --bucket=<bucket name> --file=<filename> - Displays  or sets the ACL for a S3 bucket
+    options:
+      bucket:
+        type: string
+        required: false
+      file:
+        type: string
+        required: false
+      policy:
+        type: string
+        required: false
+      force:
+        type: bool
+        required: false
+    rules:
+      - must have mist:view
+      - with option[set-policy] == /.*/ must have mist:change-acl
+
   s3-bucket-files:
     executable: /usr/local/bin/s3_bucket_files
     documentation: s3-bucket-files [delete|list] --force --bucket=<bucket name> --file=<search string> - List contents in a S3 bucket
@@ -145,22 +165,3 @@ commands:
     rules:
       - must have mist:view
       - with (arg[0] == 'delete' or arg[0] == 'rm') must have mist:destroy
-  s3-bucket-acl:
-    executable: /usr/local/bin/s3_bucket_acl
-    documentation: s3-bucket-acl [set|list] [--policy=[public-read, private, public-read-write, authenticated-read] --force] --bucket=<bucket name> --file=<filename> - Displays  or sets the ACL for a S3 bucket
-    options:
-      bucket:
-        type: string
-        required: false
-      file:
-        type: string
-        required: false
-      policy:
-        type: string
-        required: false
-      force:
-        type: bool
-        required: false
-    rules:
-      - must have mist:view
-      - with option[set-policy] == /.*/ must have mist:change-acl
