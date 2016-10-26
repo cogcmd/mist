@@ -1,3 +1,10 @@
+# :warning: Deprecated :warning:
+
+Mist has been rewrittten as two separate bundles built for Cog 0.13+:
+
+* [ec2](https://github.com/cogcmd/aws-ec2)
+* [s3](https://github.com/cogcmd/aws-s3)
+
 # Mist - AWS Bundle for Cog
 
 ## What's included?
